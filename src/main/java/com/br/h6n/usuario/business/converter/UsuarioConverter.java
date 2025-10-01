@@ -55,7 +55,7 @@ public class UsuarioConverter {
                 .build();
     }
 
-    public UsuarioDTO paraUsuarioDTO(Usuario usuario){
+    public Usuario paraUsuarioDTO(Usuario usuario){
         return  Usuario.builder()
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
