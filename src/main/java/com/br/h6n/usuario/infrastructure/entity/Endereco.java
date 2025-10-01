@@ -1,10 +1,7 @@
-package infrastructure.entity;
+package com.br.h6n.usuario.infrastructure.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "enderecos")
+@Builder
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,3 +27,13 @@ public class Endereco {
     @Column(name = "cep", length = 9)
     private String cep;
 }
+
+
+
+
+
+
+
+
+
+

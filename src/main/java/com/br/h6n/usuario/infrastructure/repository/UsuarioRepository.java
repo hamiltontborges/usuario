@@ -1,6 +1,6 @@
-package infrastructure.repository;
+package com.br.h6n.usuario.infrastructure.repository;
 
-import infrastructure.entity.Usuario;
+import com.br.h6n.usuario.infrastructure.entity.Usuario;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package infrastructure.security;
+package com.br.h6n.usuario.infrastructure.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

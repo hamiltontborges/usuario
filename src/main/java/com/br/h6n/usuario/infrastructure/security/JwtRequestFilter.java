@@ -1,4 +1,4 @@
-package infrastructure.security;
+package com.br.h6n.usuario.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
