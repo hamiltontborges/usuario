@@ -30,7 +30,7 @@ public class UsuarioController {
     private final JwtUtil jwtUtil;
     
     @PostMapping
-    public ResponseEntity<Usuario> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         return ResponseEntity.ok(usuarioService.salvaUsuario(usuarioDTO));
     }
 
