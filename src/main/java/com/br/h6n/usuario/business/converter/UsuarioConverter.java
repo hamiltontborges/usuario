@@ -1,15 +1,16 @@
 package com.br.h6n.usuario.business.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.br.h6n.usuario.business.dto.EnderecoDTO;
 import com.br.h6n.usuario.business.dto.TelefoneDTO;
 import com.br.h6n.usuario.business.dto.UsuarioDTO;
 import com.br.h6n.usuario.infrastructure.entity.Endereco;
 import com.br.h6n.usuario.infrastructure.entity.Telefone;
 import com.br.h6n.usuario.infrastructure.entity.Usuario;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class UsuarioConverter {
@@ -68,7 +69,7 @@ public class UsuarioConverter {
     public List<Endereco> paraListaEnderecoDTO(List<Endereco> enderecos){
         List<Endereco> enderecosDTOS = new ArrayList<>();
         for(Endereco endereco : enderecos){
-            enderecos.add(paraEnderecoDTO(endereco));
+            enderecosDTOS.add(paraEnderecoDTO(endereco));
         }
         return enderecosDTOS;
     }
