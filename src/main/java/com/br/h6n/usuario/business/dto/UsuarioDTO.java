@@ -1,6 +1,5 @@
 package com.br.h6n.usuario.business.dto;
 
-import com.br.h6n.usuario.infrastructure.entity.Endereco;
 import lombok.*;
 
 import java.util.List;
