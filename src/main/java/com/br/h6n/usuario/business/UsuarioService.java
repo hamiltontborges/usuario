@@ -9,6 +9,7 @@ import com.br.h6n.usuario.business.exceptions.ConflictException;
 import com.br.h6n.usuario.business.exceptions.ResourceNotFoundException;
 import com.br.h6n.usuario.infrastructure.entity.Usuario;
 import com.br.h6n.usuario.infrastructure.repository.UsuarioRepository;
+import com.br.h6n.usuario.infrastructure.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO) {
         emailExiste(usuarioDTO.getEmail());
@@ -52,4 +54,16 @@ public class UsuarioService {
         usuarioRepository.deleteByEmail(email);
     }
 
+    public UsuarioDTO atualizaUsuario(String token, UsuarioDTO usuarioDTO) {
+        String email = jwtUtil.extractUsername(token.substring(7));
+
+        usuarioDTO.setSenha(usuarioDTO.getSenha() != null ? passwordEncoder.encode(usuarioDTO.getSenha()) : null);
+
+        Usuario usuarioEntity = usuarioRepository.findByEmail(email).orElseThrow(
+            () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
+        );
+
+        Usuario usuario = usuarioConverter.updateUsuario(usuarioDTO, usuarioEntity);
+        return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
 }

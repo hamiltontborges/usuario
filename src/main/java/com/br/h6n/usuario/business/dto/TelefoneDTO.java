@@ -1,6 +1,10 @@
 package com.br.h6n.usuario.business.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -8,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class TelefoneDTO {
+    private Long id;
     private String numero;
     private String ddd;
 }
