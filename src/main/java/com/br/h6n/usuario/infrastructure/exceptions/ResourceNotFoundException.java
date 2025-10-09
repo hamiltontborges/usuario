@@ -1,4 +1,4 @@
-package com.br.h6n.usuario.business.exceptions;
+package com.br.h6n.usuario.infrastructure.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
 
