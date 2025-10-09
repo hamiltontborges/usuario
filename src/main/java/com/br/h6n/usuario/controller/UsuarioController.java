@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.br.h6n.usuario.business.UsuarioService;
+import com.br.h6n.usuario.business.ViaCepService;
 import com.br.h6n.usuario.business.dto.EnderecoDTO;
 import com.br.h6n.usuario.business.dto.TelefoneDTO;
 import com.br.h6n.usuario.business.dto.UsuarioDTO;
+import com.br.h6n.usuario.infrastructure.clients.ViaCepDTO;
 import com.br.h6n.usuario.infrastructure.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final ViaCepService viaCepService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     
@@ -80,4 +83,10 @@ public class UsuarioController {
     public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO telefoneDTO, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.cadastraTelefone(token, telefoneDTO));
     }
+
+    @GetMapping("/enderecos/cep/{cep}")
+    public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable String cep) {
+        return ResponseEntity.ok(viaCepService.buscarDadosEndereco(cep));
+    }
+    
 }
