@@ -38,22 +38,37 @@ public class SecurityConfig {
         JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userDetailsService);
 
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desativa proteção CSRF para APIs REST (não aplicável a APIs que não mantêm estado)
+                .csrf(AbstractHttpConfigurer::disable) // Desativa proteção CSRF para APIs REST (não aplicável a APIs
+                                                       // que não mantêm estado)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/usuarios/enderecos/cep/**").permitAll() // Permite acesso a api viacep
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Permite acesso à documentação da API
-                        .requestMatchers("/usuarios/login").permitAll() // Permite acesso ao endpoint de login sem autenticação
-                        .requestMatchers(HttpMethod.GET, "/auth").permitAll()// Permite acesso ao endpoint GET /auth sem autenticação
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Permite acesso ao endpoint POST /usuario sem autenticação
-                        .requestMatchers("/usuarios/**").authenticated() // Requer autenticação para qualquer endpoint que comece com /usuario/
-                        .requestMatchers("/actuator/**").permitAll() // Permite acesso a qualquer endpoint que comece com /actuator/ sem autenticação
-                        .requestMatchers("/error/**").permitAll() // Permite acesso a qualquer endpoint que comece com /actuator/ sem autenticação
+                        .requestMatchers(HttpMethod.GET, "/usuarios/enderecos/cep/**").permitAll() // Permite acesso a
+                                                                                                   // api viacep
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Permite
+                                                                                                              // acesso
+                                                                                                              // à
+                                                                                                              // documentação
+                                                                                                              // da API
+                        .requestMatchers("/usuarios/login").permitAll() // Permite acesso ao endpoint de login sem
+                                                                        // autenticação
+                        .requestMatchers(HttpMethod.GET, "/auth").permitAll()// Permite acesso ao endpoint GET /auth sem
+                                                                             // autenticação
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Permite acesso ao endpoint POST
+                                                                                   // /usuario sem autenticação
+                        .requestMatchers("/usuarios/**").authenticated() // Requer autenticação para qualquer endpoint
+                                                                         // que comece com /usuario/
+                        .requestMatchers("/actuator/**").permitAll() // Permite acesso a qualquer endpoint que comece
+                                                                     // com /actuator/ sem autenticação
+                        .requestMatchers("/error/**").permitAll() // Permite acesso a qualquer endpoint que comece com
+                                                                  // /actuator/ sem autenticação
                         .anyRequest().authenticated() // Requer autenticação para todas as outras requisições
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Configura a política de sessão como stateless (sem sessão)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Configura a política de sessão como
+                                                                                // stateless (sem sessão)
                 )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona o filtro JWT antes do filtro de autenticação padrão
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Adiciona o filtro JWT
+                                                                                                // antes do filtro de
+                                                                                                // autenticação padrão
 
         // Retorna a configuração do filtro de segurança construída
         return http.build();
@@ -67,7 +82,8 @@ public class SecurityConfig {
 
     // Configura o AuthenticationManager usando AuthenticationConfiguration
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         // Obtém e retorna o AuthenticationManager da configuração de autenticação
         return authenticationConfiguration.getAuthenticationManager();
     }

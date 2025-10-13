@@ -20,7 +20,7 @@ public class ViaCepService {
     }
 
     private String processaCep(String cep) {
-        String cepFormatado = cep.replaceAll("[^0-9]", "");
+        String cepFormatado = cep.replaceAll("\\D", "");
         if (!Objects.equals(cepFormatado.length(), 8)) {
             throw new IllegalArgumentException("Tamanho do CEP inválido");
         }
