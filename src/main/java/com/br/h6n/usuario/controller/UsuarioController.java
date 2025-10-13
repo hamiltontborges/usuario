@@ -21,7 +21,6 @@ import com.br.h6n.usuario.business.dto.EnderecoDTO;
 import com.br.h6n.usuario.business.dto.TelefoneDTO;
 import com.br.h6n.usuario.business.dto.UsuarioDTO;
 import com.br.h6n.usuario.infrastructure.clients.ViaCepDTO;
-import com.br.h6n.usuario.infrastructure.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,20 +31,15 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final ViaCepService viaCepService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    
+
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         return ResponseEntity.ok(usuarioService.salvaUsuario(usuarioDTO));
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UsuarioDTO usuarioDTO){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha())
-        );
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO) {
+        return ResponseEntity.ok(usuarioService.autenticarUsuario(usuarioDTO));
     }
 
     @GetMapping
@@ -60,7 +54,8 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioDTO> atualizaUsuario(@RequestBody UsuarioDTO usuarioDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<UsuarioDTO> atualizaUsuario(@RequestBody UsuarioDTO usuarioDTO,
+            @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.atualizaUsuario(token, usuarioDTO));
     }
 
@@ -75,12 +70,14 @@ public class UsuarioController {
     }
 
     @PostMapping("/enderecos")
-    public ResponseEntity<EnderecoDTO> cadastraEndereco(@RequestBody EnderecoDTO enderecoDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<EnderecoDTO> cadastraEndereco(@RequestBody EnderecoDTO enderecoDTO,
+            @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.cadastraEndereco(token, enderecoDTO));
     }
 
     @PostMapping("/telefones")
-    public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO telefoneDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO telefoneDTO,
+            @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.cadastraTelefone(token, telefoneDTO));
     }
 
@@ -88,5 +85,5 @@ public class UsuarioController {
     public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable String cep) {
         return ResponseEntity.ok(viaCepService.buscarDadosEndereco(cep));
     }
-    
+
 }
