@@ -1,5 +1,11 @@
 package com.br.h6n.usuario.business;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +18,7 @@ import com.br.h6n.usuario.infrastructure.entity.Telefone;
 import com.br.h6n.usuario.infrastructure.entity.Usuario;
 import com.br.h6n.usuario.infrastructure.exceptions.ConflictException;
 import com.br.h6n.usuario.infrastructure.exceptions.ResourceNotFoundException;
+import com.br.h6n.usuario.infrastructure.exceptions.UnauthorizedException;
 import com.br.h6n.usuario.infrastructure.repository.EnderecoRepository;
 import com.br.h6n.usuario.infrastructure.repository.TelefoneRepository;
 import com.br.h6n.usuario.infrastructure.repository.UsuarioRepository;
@@ -28,6 +35,7 @@ public class UsuarioService {
     private final TelefoneRepository telefoneRepository;
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO) {
@@ -35,6 +43,16 @@ public class UsuarioService {
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.paraUsuario(usuarioDTO);
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public String autenticarUsuario(UsuarioDTO usuarioDTO) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(usuarioDTO.getEmail(), usuarioDTO.getSenha()));
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+        } catch (BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException e) {
+            throw new UnauthorizedException("Usuário ou senha inválidos.", e.getCause());
+        }
     }
 
     public void emailExiste(String email) {
@@ -55,8 +73,7 @@ public class UsuarioService {
     public UsuarioDTO buscarUsuarioPorEmail(String email) {
         try {
             Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
-                () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
-            );
+                    () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email));
             return usuarioConverter.paraUsuarioDTO(usuario);
         } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException("Usuário não encontrado com o email: " + email);
@@ -73,8 +90,7 @@ public class UsuarioService {
         usuarioDTO.setSenha(usuarioDTO.getSenha() != null ? passwordEncoder.encode(usuarioDTO.getSenha()) : null);
 
         Usuario usuarioEntity = usuarioRepository.findByEmail(email).orElseThrow(
-            () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
-        );
+                () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email));
 
         Usuario usuario = usuarioConverter.updateUsuario(usuarioDTO, usuarioEntity);
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
@@ -82,8 +98,7 @@ public class UsuarioService {
 
     public EnderecoDTO atualizaEndereco(Long idEndereco, EnderecoDTO enderecoDTO) {
         Endereco enderecoEntity = enderecoRepository.findById(idEndereco).orElseThrow(
-            () -> new ResourceNotFoundException("Endereço não encontrado com o id: " + idEndereco)
-        );
+                () -> new ResourceNotFoundException("Endereço não encontrado com o id: " + idEndereco));
 
         Endereco endereco = usuarioConverter.updateEndereco(enderecoDTO, enderecoEntity);
         return usuarioConverter.paraEnderecoDTO(enderecoRepository.save(endereco));
@@ -91,8 +106,7 @@ public class UsuarioService {
 
     public TelefoneDTO atualizaTelefone(Long idTelefone, TelefoneDTO telefoneDTO) {
         Telefone telefoneEntity = telefoneRepository.findById(idTelefone).orElseThrow(
-            () -> new ResourceNotFoundException("Telefone não encontrado com o id: " + idTelefone)
-        );
+                () -> new ResourceNotFoundException("Telefone não encontrado com o id: " + idTelefone));
 
         Telefone telefone = usuarioConverter.updateTelefone(telefoneDTO, telefoneEntity);
         return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
@@ -102,8 +116,7 @@ public class UsuarioService {
         String email = jwtUtil.extractUsername(token.substring(7));
 
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
-            () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
-        );
+                () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email));
 
         Endereco endereco = usuarioConverter.paraEnderecoEntity(enderecoDTO, usuario.getId());
         return usuarioConverter.paraEnderecoDTO(enderecoRepository.save(endereco));
@@ -113,8 +126,7 @@ public class UsuarioService {
         String email = jwtUtil.extractUsername(token.substring(7));
 
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
-            () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
-        );
+                () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email));
 
         Telefone telefone = usuarioConverter.paraTelefoneEntity(telefoneDTO, usuario.getId());
         return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
